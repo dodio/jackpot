@@ -1,10 +1,12 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
+const entries = require('glob').sync(path.resolve(__dirname, './src/entry/*.js')).reduce((obj, file) => {
+    obj[path.basename(file, '.js')] = file;
+    return obj;
+}, {});
 
 module.exports = {
-    entry: {
-        jackpot: './src/index.js'
-    },
+    entry: entries,
     output: {
         path: path.resolve(__dirname, './dist'),
         filename: '[name].js'

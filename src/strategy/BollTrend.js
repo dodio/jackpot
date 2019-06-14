@@ -21,14 +21,25 @@ export default class BollTrend {
         const bollchecker = this.bollchecker;
         bollchecker.on('diff', (info) => {
             const message = [];
+            const now = Date.now();
+            // 同一种突破类型，15分钟推一条
+            const brokeDelay = 15 * 60 * 1e3;
+            const autoPushDelay = 30 * 60 * 1e3;
+
             if(info.brokeDown) {
-                message.push(`跌破布林【${info.brokeDown.priceName}】$${info.brokeDown.price}`);
+                const timekey = `_brokeDown_${info.brokeDown.peroid}`;
+                if(!this[timekey] || now > this[timekey] + brokeDelay) {
+                    message.push(`跌破布林【${info.brokeDown.priceName}】$${info.brokeDown.price}`);
+                    this[timekey] = now;
+                }
             }
             if(info.brokeUp) {
-                message.push(`突破布林【${info.brokeDown.priceName}】$${info.brokeUp.price}`);
+                const timekey = `_brokeUp_${info.brokeUp.peroid}`;
+                if(!this[timekey] || now > this[timekey] + brokeDelay) {
+                    message.push(`突破布林【${info.brokeUp.priceName}】$${info.brokeUp.price}`);
+                    this[timekey] = now;
+                }
             }
-            const now = Date.now();
-            const autoPushDelay = 30 * 60 * 1e3;
             if(message.length || !this._pushtime || (now > this._pushtime + autoPushDelay) ) {
                 message.push(`${info.trend.presentPrice.priceName}:${info.trend.presentPrice.price}`);
                 message.push(`【最近价格限制】

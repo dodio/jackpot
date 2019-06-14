@@ -111,7 +111,7 @@ export default class BollChecker extends EventEmitter {
         const priceInAllPoistion = _.findIndex(allPricePoistions, p => p.priceName === presentPriceName);
 
         // 两端价格
-        const siblingPrices = priceInAllPoistion === 0 ? allPricePoistions.slice(0, 2) : allPricePoistions.slice(priceInAllPoistion - 1, priceInAllPoistion + 1);
+        const siblingPrices = priceInAllPoistion === 0 ? allPricePoistions.slice(0, 2) : allPricePoistions.slice(priceInAllPoistion - 1, priceInAllPoistion + 2);
 
         const isEdgeFirst = priceInEdgePosition === 0;
         const isEdgeLast = priceInEdgePosition === (edgePricePositions.length -1 );

@@ -5,13 +5,13 @@ const timeTagGetters = {
         return date.getMinutes();
     },
     [PERIOD_M5]:  (date) => {
-        return Math.floor(date.getMinutes()/ 12);
+        return Math.floor(date.getMinutes() / 12);
     },
     [PERIOD_M15]:  (date) => {
-        return Math.floor(date.getMinutes()/ 4);
+        return Math.floor(date.getMinutes() / 4);
     },
     [PERIOD_M30]:  (date) => {
-        return Math.floor(date.getMinutes()/ 2);
+        return Math.floor(date.getMinutes() / 2);
     },
     [PERIOD_H1]: (date) => {
         return date.getHours();
@@ -26,7 +26,7 @@ export default class Kline {
         this.peroid = peroid;
         this.exchange = exchange;
         this.getTimeTag = timeTagGetters[peroid];
-        this.peroidName = peroidMap[peroidMap];
+        this.peroidName = peroidMap[peroid];
         if(!this.getTimeTag) {
             throw new Error(`添加${peroidName}时间分别器`);
         }
@@ -39,7 +39,7 @@ export default class Kline {
         const nowDate = new Date();
         const thisTag= this.getTimeTag(nowDate);
         if(!this.records || this.updateTag !== thisTag) {
-            Log(`更新${this.peroidName}数据`);
+            Log(`更新【${this.peroidName}K线】数据${this.updateTag && `，tag:${thisTag},${this.updateTag}`}`);
             this.records = _C(this.exchange.GetRecords, this.peroid);
             this.countBoll();
             this.updateTag = thisTag;

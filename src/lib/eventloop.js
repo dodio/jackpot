@@ -21,7 +21,7 @@ class EventLoop {
     }
 
     polling() {
-        const now = parseInt(_D());
+        const now = Date.now();
         const lefttimeouts = this._timeouts.filter(t => {
             if(t[1] > now) {
                 return true;
@@ -43,7 +43,7 @@ class EventLoop {
         if(typeof callback !== 'function') {
             throw new Error('timeout callback should be a function.')
         }
-        const timeout = [timeoutId++, parseInt(_D()) + delay, callback];
+        const timeout = [timeoutId++, Date.now() + delay, callback];
         this._timeouts.push(timeout);
         return timeout[0];
     }

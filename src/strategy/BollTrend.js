@@ -8,7 +8,7 @@ const looptime = 10;
 
 export default class BollTrend {
     constructor() {
-        this.init();
+        Log('创建趋势策略');
     }
 
     init() {
@@ -19,8 +19,24 @@ export default class BollTrend {
 
     bindCheckerEvents() {
         const bollchecker = this.bollchecker;
-        bollchecker.on('BROKE_DOWN', () => {
-            console.log('跌破下轨');
+        bollchecker.on('diff', (info) => {
+            const message = [];
+            if(info.brokeDown) {
+                message.push(`跌破布林【${info.brokeDown.priceName}】$${info.brokeDown.price}`);
+            }
+            if(info.brokeUp) {
+                message.push(`突破布林【${info.brokeDown.priceName}】$${info.brokeUp.price}`);
+            }
+            const now = Date.now();
+            const autoPushDelay = 30 * 60 * 1e3;
+            if(message.length || !this._pushtime || (now > this._pushtime + autoPushDelay) ) {
+                message.push(`${info.trend.presentPrice.priceName}:${info.trend.presentPrice.price}`);
+                message.push(`【最近价格限制】
+                ${info.trend.siblingPrices.map(p => `${p.priceName}:${p.price}`).join(',')}
+                `);
+                this._pushtime = now;
+                Log(message.join('\n'), '@');
+            }
         });
         bollchecker.on('update', info => {
             Log(info);
@@ -28,6 +44,6 @@ export default class BollTrend {
     }
 
     beforeDestory() {
-
+        Log('布林趋势策略正在收尾工作');
     }
 }

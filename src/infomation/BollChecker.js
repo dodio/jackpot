@@ -24,20 +24,23 @@ export default class BollChecker extends EventEmitter {
         })
     }
 
-    start(delay) {
-        this.check();
+    start(delay = 5e3) {
+        this._timer = setTimeout(() => {
+            this.check();
+            this.start(delay);
+        }, delay)
     }
     stop() {
-
+        clearTimeout(this._timer);
     }
     check() {
         this.update();
-        Log('获取新行情');
+        // Log('获取新行情');
         const lastTrend = this._lastTrend;
         const exchangeTicker = _C(this.exchange.GetTicker);
         const trend = this._lastTrend = this.__getBollPositionInfo(exchangeTicker);
-        this.emit(trend);
         if(!lastTrend) {
+            this.emit('first_trend', trend);
             return;
         }
         this.__diff(trend, lastTrend);
@@ -51,7 +54,7 @@ export default class BollChecker extends EventEmitter {
                 recentBollLines: recentBollLines,
                 peroid: kline.peroid,
                 peroidName: kline.peroidName,
-                presentBoll: recentBollLine.map(line => line[line.length - 1])
+                presentBoll: recentBollLines.map(line => line[line.length - 1])
             };
         });
         // 计算布林价格排布
@@ -60,19 +63,25 @@ export default class BollChecker extends EventEmitter {
         let allPricePoistions = [];
         // 完全横盘价格名称分布列表
         let normaEdgelPositionNameList = [presentPriceName];
-        peroidBollInfo.forEach(({presentBoll, peroidName}) => {
+        peroidBollInfo.forEach(({presentBoll, peroidName, peroid}) => {
             const upName = `${peroidName}上轨`;
             const avgName = `${peroidName}均线`;
             const downName = `${peroidName}下轨`;
             const upPrice = {
                 priceName: upName,
+                peroidName,
+                peroid,
                 price: _N(presentBoll[0], 2)
             };
             const avgPrice = {
+                peroidName,
+                peroid,
                 priceName: avgName,
                 price: _N(presentBoll[1], 2)
             };
             const downPrice = {
+                peroidName,
+                peroid,
                 priceName: downName,
                 price: _N(presentBoll[2], 2)
             };
@@ -98,8 +107,8 @@ export default class BollChecker extends EventEmitter {
         allPricePoistions = allPricePoistions.sort((a, b) => b.price - a.price );
 
         // 当前价格所处位置
-        const priceInEdgePosition = edgePricePositions.findIndex(p => p.priceName === presentPriceName);
-        const priceInAllPoistion = allPricePoistions.findIndex(p => p.priceName === presentPriceName);
+        const priceInEdgePosition = _.findIndex(edgePricePositions, p => p.priceName === presentPriceName);
+        const priceInAllPoistion = _.findIndex(allPricePoistions, p => p.priceName === presentPriceName);
 
         // 两端价格
         const siblingPrices = priceInAllPoistion === 0 ? allPricePoistions.slice(0, 2) : allPricePoistions.slice(priceInAllPoistion - 1, priceInAllPoistion + 1);
@@ -114,11 +123,28 @@ export default class BollChecker extends EventEmitter {
             edgePricePositions,
             allPricePoistions,
             priceInEdgePosition,
+            priceInAllPoistion,
             siblingPrices,
+            normaEdgelPositionNameList,
+            ticker,
+            presentPrice
         }
     }
 
     __diff(trend, lastTrend) {
-
+        const diffInfo = {
+            trend,
+            lastTrend
+        };
+        // TODO 两组信息不全一样的问题，非当前价的位置之间可能发生了交换
+        if(trend.priceInEdgePosition > lastTrend.priceInEdgePosition) {
+            // 跌破某轨
+            diffInfo.brokeDown = trend.edgePricePositions[trend.priceInEdgePosition - 1];
+        }
+        if(trend.priceInEdgePosition < lastTrend.priceInEdgePosition) {
+            // 突破某轨
+            diffInfo.brokeUp = trend.edgePricePositions[trend.priceInEdgePosition + 1];
+        }
+        this.emit('diff', diffInfo);
     }
 }

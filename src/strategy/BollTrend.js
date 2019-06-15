@@ -43,10 +43,9 @@ export default class BollTrend {
             if(message.length || !this._pushtime || (now > this._pushtime + autoPushDelay) ) {
                 message.push(`${info.trend.presentPrice.priceName}:${info.trend.presentPrice.price}`);
                 message.push(`【最近价格限制】
-                ${info.trend.siblingPrices.map(p => `${p.priceName}:${p.price}`).join(',')}
-                `);
+${info.trend.siblingPrices.map(p => `${p.priceName}:${p.price}`).join(',')}`);
                 this._pushtime = now;
-                Log(message.join('\n'), '@');
+                Log('\n',message.join('\n'), '@');
             }
         });
         bollchecker.on('update', info => {

@@ -1,4 +1,4 @@
-import Kline from '../lib/Kline';
+import Kline from './Kline';
 const EventEmitter = require('eventemitter3');
 const presentPriceName = '【当前价】';
 
@@ -50,11 +50,21 @@ export default class BollChecker extends EventEmitter {
         // 获取当前所有K线的近期布林数据
         const peroidBollInfo = this.klines.map(kline => {
             const recentBollLines = kline.getRecentBoll(100, ticker);
+            const presentBoll = recentBollLines.map(line => line[line.length - 1]);
+            // TODO 判断稳定态或非稳定态
             return {
                 recentBollLines: recentBollLines,
                 peroid: kline.peroid,
                 peroidName: kline.peroidName,
-                presentBoll: recentBollLines.map(line => line[line.length - 1])
+                presentBoll,
+                // 在上轨及以上
+                isOnTop: ticker.Last >= presentBoll[0],
+                // 下轨之下
+                isBelowDown:  ticker.Last <= presentBoll[2],
+                // 上升通道
+                isGrowing: ticker.Last < presentBoll[0] && ticker.Last > presentBoll[1],
+                // 下降通道
+                isShrinking: ticker.Last < presentBoll[1] && ticker.Last > presentBoll[2],
             };
         });
         // 计算布林价格排布
@@ -134,9 +144,14 @@ export default class BollChecker extends EventEmitter {
     __diff(trend, lastTrend) {
         const diffInfo = {
             trend,
-            lastTrend
+            lastTrend,
+            // 价差
+            priceDiff: trend.ticker.Last - lastTrend.ticker.Last
         };
-        // TODO 两组信息不全一样的问题，非当前价的位置之间可能发生了交换
+        this.__diffPeroidStatus(trend, lastTrend, diffInfo);
+
+
+        // TODO 价格位置一样，但是不同k线的价格位置变化
         if(trend.priceInEdgePosition > lastTrend.priceInEdgePosition) {
             // 跌破某轨
             diffInfo.brokeDown = trend.edgePricePositions[trend.priceInEdgePosition - 1];
@@ -146,5 +161,34 @@ export default class BollChecker extends EventEmitter {
             diffInfo.brokeUp = trend.edgePricePositions[trend.priceInEdgePosition + 1];
         }
         this.emit('diff', diffInfo);
+    }
+
+    __diffPeroidStatus(trend, lastTrend, diffInfo) {
+        PEROIDS.forEach(peroid => {
+            const presentPeroidBollInfo = trend.peroidBollInfo.find(p => p.peroid === peroid);
+            const lastPeroidBollInfo = lastTrend.peroidBollInfo.find(p => p.peroid === peroid);
+            const peroidKeyPrex = `${peroid}_`;
+            const peroidBollInfo = {
+                prendBoll:  presentPeroidBollInfo,
+                lastBoll: lastPeroidBollInfo
+            };
+
+            // 突破上轨
+            if(!lastPeroidBollInfo.isOnTop && presentPeroidBollInfo.isOnTop) {
+                diffInfo[peroidKeyPrex + 'ENTER_UP'] = peroidBollInfo;
+            }
+            // 回退上轨
+            if(lastPeroidBollInfo.isOnTop && !presentPeroidBollInfo.isOnTop) {
+                diffInfo[peroidKeyPrex + 'BACK_UP'] = peroidBollInfo;
+            }
+            // 跌破下轨
+            if(!lastPeroidBollInfo.isBelowDown && presentPeroidBollInfo.isBelowDown) {
+                diffInfo[peroidKeyPrex + 'ENTER_BELOW'] = peroidBollInfo;
+            }
+            // 回退到下轨以上
+            if(lastPeroidBollInfo.isBelowDown && !presentPeroidBollInfo.isBelowDown) {
+                diffInfo[peroidKeyPrex + 'BACK_BELOW'] = peroidBollInfo;
+            }
+        });
     }
 }

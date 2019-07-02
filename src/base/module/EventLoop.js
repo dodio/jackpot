@@ -1,5 +1,5 @@
 let timeoutId = 0;
-class EventLoop {
+export default class EventLoop {
     constructor() {
         this._timeouts = [];
         this._microtasks = [];
@@ -51,13 +51,7 @@ class EventLoop {
     clearTimeout(id) {
         const index = this._timeouts.findIndex(t => t[0] === id);
         if(index > -1) {
-            this._timeouts.splice(index, 1);
+           return this._timeouts.splice(index, 1)[0];
         }
     }
 }
-const eventLoop =  new EventLoop();
-global.nextTick = eventLoop.nextTick.bind(eventLoop);
-global.setTimeout = eventLoop.setTimeout.bind(eventLoop);
-global.clearTimeout = eventLoop.clearTimeout.bind(eventLoop);
-
-module.exports = eventLoop;

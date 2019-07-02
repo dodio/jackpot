@@ -1,5 +1,4 @@
-import framework from '../lib/framework';
+import framework from '../base/framework';
 import BollTrend from '../strategy/BollTrend';
 
-framework(BollTrend);
-
+new BollTrend(framework);

@@ -7,4 +7,12 @@ const peroidsMap = {
     [PERIOD_D1]: '日线',
 }
 
-module.exports = peroidsMap;
+const peroidKeys = {
+    [PERIOD_M1]: 'PERIOD_M1',
+    [PERIOD_M5]: 'PERIOD_M5',
+    [PERIOD_M15]: 'PERIOD_M15',
+    [PERIOD_M30]: 'PERIOD_M30',
+    [PERIOD_H1]: 'PERIOD_H1',
+    [PERIOD_D1]: 'PERIOD_D1',
+}
+export { peroidsMap, peroidKeys};

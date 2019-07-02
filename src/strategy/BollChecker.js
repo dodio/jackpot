@@ -21,14 +21,14 @@ export default class BollChecker extends EventEmitter {
     update() {
         this.klines.forEach(kline => {
             kline.updateRecords();
-        })
+        });
     }
 
     start(delay = 5e3) {
         this._timer = setTimeout(() => {
             this.check();
             this.start(delay);
-        }, delay)
+        }, delay);
     }
     stop() {
         clearTimeout(this._timer);
@@ -39,7 +39,7 @@ export default class BollChecker extends EventEmitter {
         const lastTrend = this._lastTrend;
         const exchangeTicker = _C(this.exchange.GetTicker);
         const trend = this._lastTrend = this.__getBollPositionInfo(exchangeTicker);
-        if(!lastTrend) {
+        if (!lastTrend) {
             this.emit('first_trend', trend);
             return;
         }
@@ -60,7 +60,7 @@ export default class BollChecker extends EventEmitter {
                 // 在上轨及以上
                 isOnTop: ticker.Last >= presentBoll[0],
                 // 下轨之下
-                isBelowDown:  ticker.Last <= presentBoll[2],
+                isBelowDown: ticker.Last <= presentBoll[2],
                 // 上升通道
                 isGrowing: ticker.Last < presentBoll[0] && ticker.Last > presentBoll[1],
                 // 下降通道
@@ -73,7 +73,7 @@ export default class BollChecker extends EventEmitter {
         let allPricePoistions = [];
         // 完全横盘价格名称分布列表
         let normaEdgelPositionNameList = [presentPriceName];
-        peroidBollInfo.forEach(({presentBoll, peroidName, peroid}) => {
+        peroidBollInfo.forEach(({ presentBoll, peroidName, peroid }) => {
             const upName = `${peroidName}上轨`;
             const avgName = `${peroidName}均线`;
             const downName = `${peroidName}下轨`;
@@ -113,8 +113,8 @@ export default class BollChecker extends EventEmitter {
         allPricePoistions.push(presentPrice);
         edgePricePositions.push(presentPrice);
 
-        edgePricePositions = edgePricePositions.sort((a, b) => b.price - a.price );
-        allPricePoistions = allPricePoistions.sort((a, b) => b.price - a.price );
+        edgePricePositions = edgePricePositions.sort((a, b) => b.price - a.price);
+        allPricePoistions = allPricePoistions.sort((a, b) => b.price - a.price);
 
         // 当前价格所处位置
         const priceInEdgePosition = _.findIndex(edgePricePositions, p => p.priceName === presentPriceName);
@@ -124,8 +124,8 @@ export default class BollChecker extends EventEmitter {
         const siblingPrices = priceInAllPoistion === 0 ? allPricePoistions.slice(0, 2) : allPricePoistions.slice(priceInAllPoistion - 1, priceInAllPoistion + 2);
 
         const isEdgeFirst = priceInEdgePosition === 0;
-        const isEdgeLast = priceInEdgePosition === (edgePricePositions.length -1 );
-        
+        const isEdgeLast = priceInEdgePosition === (edgePricePositions.length - 1);
+
         return {
             peroidBollInfo,
             isEdgeFirst,
@@ -138,7 +138,7 @@ export default class BollChecker extends EventEmitter {
             normaEdgelPositionNameList,
             ticker,
             presentPrice
-        }
+        };
     }
 
     __diff(trend, lastTrend) {
@@ -152,11 +152,11 @@ export default class BollChecker extends EventEmitter {
 
 
         // TODO 价格位置一样，但是不同k线的价格位置变化
-        if(trend.priceInEdgePosition > lastTrend.priceInEdgePosition) {
+        if (trend.priceInEdgePosition > lastTrend.priceInEdgePosition) {
             // 跌破某轨
             diffInfo.brokeDown = trend.edgePricePositions[trend.priceInEdgePosition - 1];
         }
-        if(trend.priceInEdgePosition < lastTrend.priceInEdgePosition) {
+        if (trend.priceInEdgePosition < lastTrend.priceInEdgePosition) {
             // 突破某轨
             diffInfo.brokeUp = trend.edgePricePositions[trend.priceInEdgePosition + 1];
         }
@@ -169,24 +169,24 @@ export default class BollChecker extends EventEmitter {
             const lastPeroidBollInfo = lastTrend.peroidBollInfo.find(p => p.peroid === peroid);
             const peroidKeyPrex = `${peroid}_`;
             const peroidBollInfo = {
-                prendBoll:  presentPeroidBollInfo,
+                prendBoll: presentPeroidBollInfo,
                 lastBoll: lastPeroidBollInfo
             };
 
             // 突破上轨
-            if(!lastPeroidBollInfo.isOnTop && presentPeroidBollInfo.isOnTop) {
+            if (!lastPeroidBollInfo.isOnTop && presentPeroidBollInfo.isOnTop) {
                 diffInfo[peroidKeyPrex + 'ENTER_UP'] = peroidBollInfo;
             }
             // 回退上轨
-            if(lastPeroidBollInfo.isOnTop && !presentPeroidBollInfo.isOnTop) {
+            if (lastPeroidBollInfo.isOnTop && !presentPeroidBollInfo.isOnTop) {
                 diffInfo[peroidKeyPrex + 'BACK_UP'] = peroidBollInfo;
             }
             // 跌破下轨
-            if(!lastPeroidBollInfo.isBelowDown && presentPeroidBollInfo.isBelowDown) {
+            if (!lastPeroidBollInfo.isBelowDown && presentPeroidBollInfo.isBelowDown) {
                 diffInfo[peroidKeyPrex + 'ENTER_BELOW'] = peroidBollInfo;
             }
             // 回退到下轨以上
-            if(lastPeroidBollInfo.isBelowDown && !presentPeroidBollInfo.isBelowDown) {
+            if (lastPeroidBollInfo.isBelowDown && !presentPeroidBollInfo.isBelowDown) {
                 diffInfo[peroidKeyPrex + 'BACK_BELOW'] = peroidBollInfo;
             }
         });

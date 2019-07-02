@@ -17,13 +17,13 @@ export default class EventLoop {
         this._macrotasks = [];
         _.each(microtasks.concat(macrotasks), task => {
             task.apply(null);
-        })
+        });
     }
 
     polling() {
         const now = Date.now();
         const lefttimeouts = this._timeouts.filter(t => {
-            if(t[1] > now) {
+            if (t[1] > now) {
                 return true;
             }
             this._macrotasks.push(t[2]);
@@ -31,17 +31,17 @@ export default class EventLoop {
         });
         this._timeouts = lefttimeouts;
     }
-    
+
     nextTick(callback) {
-        if(typeof callback !== 'function') {
-            throw new Error('nextTick callback should be a function.')
+        if (typeof callback !== 'function') {
+            throw new Error('nextTick callback should be a function.');
         }
         this._microtasks.push(callback);
     }
 
     setTimeout(callback, delay = 4) {
-        if(typeof callback !== 'function') {
-            throw new Error('timeout callback should be a function.')
+        if (typeof callback !== 'function') {
+            throw new Error('timeout callback should be a function.');
         }
         const timeout = [timeoutId++, Date.now() + delay, callback];
         this._timeouts.push(timeout);
@@ -50,8 +50,8 @@ export default class EventLoop {
 
     clearTimeout(id) {
         const index = this._timeouts.findIndex(t => t[0] === id);
-        if(index > -1) {
-           return this._timeouts.splice(index, 1)[0];
+        if (index > -1) {
+            return this._timeouts.splice(index, 1)[0];
         }
     }
 }

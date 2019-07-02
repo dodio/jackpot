@@ -58,18 +58,20 @@ function installRobot(framework, eventloop) {
     };
     _.each(robot, (v, key, obj) => {
         if (_.isFunction(v)) {
-            obj[key] = v.bind(obj)
+            obj[key] = v.bind(obj);
         }
     });
     Object.assign(global, robot);
-    return installedRobot = true;
+    installedRobot = true;
+    return installedRobot;
 }
 
 class Framework extends EventEmiiter {
     constructor() {
+        super();
         this.once('init', () => {
             this.init();
-        })
+        });
     }
 
     init() {

@@ -26,6 +26,7 @@ const strgedyArgs =  {
 
 export default class BollTrend extends EventEmitter {
     constructor(framework) {
+        super();
         Log('创建趋势策略');
         this.framework = framework;
         this.framework.once('init', () => {
@@ -47,15 +48,14 @@ export default class BollTrend extends EventEmitter {
         const bollchecker = this.bollchecker;
         bollchecker.on('diff', (info) => {
             const messager = this.framework.messager;
-            const now = Date.now();
-            const brokeDelay = 15 * 60 ;
+            const brokeDelay = 15 * 60;
             const autoPushDelay = 30 * 60;
 
-            if(info.brokeDown) {
+            if (info.brokeDown) {
                 const timekey = `_brokeDown_${info.brokeDown.peroid}`;
                 messager.send(`跌破布林【${info.brokeDown.priceName}】$${info.brokeDown.price}`, timekey, brokeDelay);
             }
-            if(info.brokeUp) {
+            if (info.brokeUp) {
                 const timekey = `_brokeUp_${info.brokeUp.peroid}`;
                 messager.send(`突破布林【${info.brokeUp.priceName}】$${info.brokeUp.price}`, timekey, brokeDelay);
             }

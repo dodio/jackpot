@@ -19,8 +19,8 @@ export default class Messager {
     stopAutoFlush() {
         this._auto = false;
     }
-    autoFlush(){
-        if(!this._auto) {
+    autoFlush() {
+        if (!this._auto) {
             return;
         }
         nextTick(() => {
@@ -36,14 +36,14 @@ export default class Messager {
      * @param {Integer} interval 发送间隔时间，秒
      */
     send(msg, key, interval) {
-        if(_.isArray(msg)) {
+        if (_.isArray(msg)) {
             msg = msg.join('');
         }
-        interval = (parseInt(interval) || 0) * 1e3;
-        if(interval && key) {
+        interval = (parseInt(interval, 10) || 0) * 1e3;
+        if (interval && key) {
             const now = Date.now();
             // 间隔时间未到不发送
-            if(this._sendedTime[key] && ((this._sendedTime[key] + interval) > now)) {
+            if (this._sendedTime[key] && ((this._sendedTime[key] + interval) > now)) {
                 return false;
             }
             this._sendedTime[key] = now;
@@ -54,7 +54,7 @@ export default class Messager {
      * 推出消息，将多条消息合成一条发送
      */
     flush() {
-        if(!this.messages.length){
+        if (!this.messages.length) {
             return;
         }
         const msg = this.messages.join('\n') + '@';

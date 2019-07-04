@@ -4,10 +4,9 @@
  */
 
 export default class Messager {
-    constructor(framework) {
+    constructor() {
         this._sendedTime = {};
         this.messages = [];
-        this.framework = framework;
         framework.once('init', () => {
             this.startAutoFlush();
         });

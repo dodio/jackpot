@@ -1,6 +1,5 @@
 export default class Env {
-    constructor(framework) {
-        this.framework = framework;
+    constructor() {
         this.args = {};
     }
     // TODO 根据不同模块隔离不同策略变量

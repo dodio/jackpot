@@ -15,4 +15,11 @@ const peroidKeys = {
     [PERIOD_H1]: 'PERIOD_H1',
     [PERIOD_D1]: 'PERIOD_D1',
 };
-export { peroidsMap, peroidKeys };
+
+const contractTypes = {
+    'this_week': 'this_week',
+    'next_week': 'next_week',
+    'quarter': 'quarter'
+};
+
+export { peroidsMap, peroidKeys, contractTypes };

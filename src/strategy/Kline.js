@@ -1,4 +1,4 @@
-const peroidMap = require('../meta/peroids');
+import { peroidsMap } from '../meta/peroids';
 
 const timeTagGetters = {
     [PERIOD_M1]: (date) => {
@@ -26,7 +26,7 @@ export default class Kline {
         this.peroid = peroid;
         this.exchange = exchange;
         this.getTimeTag = timeTagGetters[peroid];
-        this.peroidName = peroidMap[peroid];
+        this.peroidName = peroidsMap[peroid];
         if (!this.getTimeTag) {
             throw new Error(`请添加${this.peroidName}时间分别器`);
         }

@@ -1,0 +1,27 @@
+[{
+    "Info": {
+        "contract_code": "BTC190712",
+        "contract_type": "next_week",
+        "frozen": 0,
+        "profit_unreal": 0.0000227426870895,
+        "profit_rate": 0.04991815131962198,
+        "direction": "buy",
+        "volume": 1,
+        "cost_open": 10974.550000000001,
+        "available": 1,
+        "cost_hold": 10974.550000000001,
+        "profit": 0.0000227426870895,
+        "symbol": "BTC",
+        "lever_rate": 20,
+        "position_margin": 0.000454462411868376,   
+        "last_price": 11002.01
+    },
+    "MarginLevel": 20,
+    "Amount": 1,
+    "FrozenAmount": 0,
+    "Price": 10974.5501,
+    "Profit": 0.0000227426870895,
+    "Margin": 0.000454462411868376,
+    "Type": 0,
+    "ContractType": "next_week"
+}]

@@ -1,0 +1,20 @@
+{
+    "account": {
+        "margin_balance": 0.05565521485145636,
+        "margin_position": 0,
+        "margin_available": 0.05565521485145636,
+        "withdraw_available": 0.052053311574243484,
+        "liquidation_price": null,
+        "symbol": "BTC",
+        "margin_frozen": 0,
+        "profit_real": 0.003601903277212877,
+        "profit_unreal": 0,
+        "risk_rate": null,
+        "lever_rate": 20,
+        "margin_money": 599.1751382564029,
+        "margin_available_money": 599.1751382564029,
+        "totalPaper": 119,
+        "availablePaper": 119,
+        "positionRate": 0
+    }
+}

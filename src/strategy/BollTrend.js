@@ -30,14 +30,14 @@ export default class BollTrend extends EventEmitter {
     constructor() {
         super();
         Log('创建趋势策略');
-        framework.once('init', () => {
+        jack.once('init', () => {
             this.init();
         });
     }
 
     init() {
         const args = _.mapObject(strgedyArgs, (val, key) => {
-            return framework.env.get(key, val);
+            return jack.env.get(key, val);
         });
         Log('布林策略参数：', args);
         const bollchecker = this.bollchecker = new BollChecker(exchange);
@@ -49,11 +49,11 @@ export default class BollTrend extends EventEmitter {
     bindCheckerEvents() {
         const bollchecker = this.bollchecker;
         bollchecker.on('diff', (info) => {
-            const messager = framework.messager;
+            const messager = jack.messager;
             const brokeDelay = 15 * 60;
             const autoPushDelay = 30 * 60;
-            const openSpeed = framework.env.get('OPEN_TRIGGER_SPEED');
-            const tickerSpeed = Math.ceil(info.trend.ticker.Last - info.lastRend.ticker.Last);
+            const openSpeed = jack.env.get('OPEN_TRIGGER_SPEED');
+            const tickerSpeed = Math.ceil(info.trend.ticker.Last - info.lastTrend.ticker.Last);
 
             if (info.brokeDown) {
                 const timekey = `_brokeDown_${info.brokeDown.peroid}`;
@@ -102,5 +102,5 @@ export default class BollTrend extends EventEmitter {
 
 function getOpenPosition(peroid) {
     const argName = peroidKeys[peroid] + '_OPEN';
-    return framework.env.get(argName);
+    return jack.env.get(argName);
 }

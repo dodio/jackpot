@@ -19,10 +19,10 @@ export default class BollChecker extends EventEmitter {
         const currency = exchange.GetCurrency();
         Log('创建布林行情监测，对应:', exchangeName, '交易的：', currency);
         if (exchangeName === 'Futures_HuobiDM') {
-            const type = framework.env.get('DM_TYPE', contractTypes.next_week);
+            const type = jack.env.get('DM_TYPE', contractTypes.next_week);
             Log('合约类型为：', type);
             exchange.SetContractType(type);
-            const marginLevel = framework.env.get('MARGIN_LEVEL', 20);
+            const marginLevel = jack.env.get('MARGIN_LEVEL', 20);
             Log('杠杆大小：', marginLevel);
             exchange.SetMarginLevel(marginLevel);
         }
@@ -51,7 +51,7 @@ export default class BollChecker extends EventEmitter {
         // Log('获取新行情');
         const lastTrend = this._lastTrend;
         const exchangeTicker = _C(this.exchange.GetTicker);
-        framework.emit('ticker', exchangeTicker);
+        jack.emit('ticker', exchangeTicker);
         const trend = this._lastTrend = this.__getBollPositionInfo(exchangeTicker);
         if (!lastTrend) {
             this.emit('first_trend', trend);

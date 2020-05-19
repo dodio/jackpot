@@ -7,9 +7,6 @@ export default class Messager {
     constructor() {
         this._sendedTime = {};
         this.messages = [];
-        framework.once('init', () => {
-            this.startAutoFlush();
-        });
     }
     startAutoFlush() {
         this._auto = true;
@@ -22,8 +19,8 @@ export default class Messager {
         if (!this._auto) {
             return;
         }
+        this.flush();
         nextTick(() => {
-            this.flush();
             this.autoFlush();
         });
     }

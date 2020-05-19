@@ -28,7 +28,7 @@ export default class HuoBiDmAccount {
         Log('【创建账户信息】：交易所：', this.exchangeName, '交易币种：', this.currency);
         this._initAccount = this.getAccount();
         Log('初始账户状态：', this._initAccount);
-        framework.on('ticker', (ticker) => {
+        jack.on('ticker', (ticker) => {
             this.ticker = ticker;
         });
         this.startAutoCheck();
@@ -93,10 +93,10 @@ export default class HuoBiDmAccount {
         const exchangeOrders = _C(exchange.GetOrders());
         const account =  this.getAccount();
 
-        const messager = framework.messager;
-        const contractType = framework.env.get('DM_TYPE');
+        const messager = jack.messager;
+        const contractType = jack.env.get('DM_TYPE');
         // 滑单价格
-        const sliperPrice = framework.env.get('SLIPER_PRICE', 1);
+        const sliperPrice = jack.env.get('SLIPER_PRICE', 1);
         const makeOrderPrice = (status.name === 'close_long' || status.name === 'open_short') ? ticker.Buy - sliperPrice : ticker.Sell + sliperPrice;
 
         if (status.name === 'close_long') {

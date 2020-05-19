@@ -3,7 +3,7 @@ module.exports = {
         'eslint-config-alloy',
     ],
     globals: {
-        framework: false,
+        jack: false,
 
         // 发明者的全局变量
         Log: false,
